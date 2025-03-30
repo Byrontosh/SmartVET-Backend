@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken"
 import Veterinario from "../models/Veterinario.js"
+import Paciente from "../models/Paciente.js"
+
 
 const crearTokenJWT = (id, rol) => {
 
@@ -17,6 +19,10 @@ const verificarTokenJWT = async (req, res, next) => {
         const { id, rol } = jwt.verify(token,process.env.JWT_SECRET)
         if (rol === "veterinario") {
             req.veterinarioBDD = await Veterinario.findById(id).lean().select("-password")
+            next()
+        }
+        else{
+            req.pacienteBDD = await Paciente.findById(id).lean().select("-password")
             next()
         }
     } catch (error) {
